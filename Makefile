@@ -1,2 +1,2 @@
-ARDUINO_LIBS = IRremote
+ARDUINO_LIBS = IRremote Servo Wire
 include ../Teensy.mk
