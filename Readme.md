@@ -3,7 +3,7 @@ This project is aimed to create an wireless networked automatic room temperature
 
 # Status
 
-Currently implemented using [teensy3](http://www.pjrc.com/teensy/index.html) connected with some IR led from a busted electric fan remote controller. See [here](https://www.sparkfun.com/products/10732) for and example for connecting the led. It can now successfully control the fan. Since the remote is busted in the first place, so I can't use the normal record and playback procedure. Luckily, the decoder chip in the remote is easy to track down. It uses a code called 5104, and chip is from China (see the datasheet in doc directory. It's in chinese). It is supposedly a common protocol used in simple appliance like the electic fan.
+Currently implemented using [teensy3](http://www.pjrc.com/teensy/index.html) connected with some IR led from a busted electric fan remote controller. See [here](https://www.sparkfun.com/products/10732) for and example for connecting the led. It can now successfully control the fan. Since the remote is busted in the first place, so I can't use the normal record and playback procedure. Luckily, the encoder chip in the remote is easy to track down. It uses a code called 5104, and chip is from China (see the datasheet in doc directory. It's in chinese). It is supposedly a common protocol used in simple appliance like the electic fan.
 
 # Compile
 
