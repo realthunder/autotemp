@@ -77,7 +77,7 @@ void irDecode(decode_results *results,int width) {
         sp("ir(2");
         for (int i = 1; i <= len; i++) {
             unsigned int code = results->rawbuf[i];
-            if(width && (i-1)%width == 0) {
+            if(i>1 && width && (i-1)%width == 0) {
                 sp(")");
                 speol();
                 sp("ir(3");
