@@ -1,0 +1,70 @@
+# POWER
+ir(1,1,32,0xC40BF)
+
+# MUTE
+ir(1,1,32,0xC28D7)
+
+# KEYSTONE
+ir(1,1,32,0xC718E)
+
+# MODE
+ir(1,1,32,0xC08F7)
+
+# UP/VOL UP
+ir(1,1,32,0xCD02F)
+
+# HOME
+ir(1,1,32,0xC49B6)
+
+# BLANK
+ir(1,1,32,0xCE01F)
+
+# LEFT
+ir(1,1,32,0xCB04F)
+
+# OK
+ir(1,1,32,0xCA857)
+
+# RIGHT
+ir(1,1,32,0xC708F)
+
+# AUTO
+ir(1,1,32,0xC10EF)
+
+# MENU
+ir(1,1,32,0xCF00F)
+
+# DOWN/VOL DOWN
+ir(1,1,32,0xC30CF)
+
+# BACK
+ir(1,1,32,0xCA15E)
+
+### iPhone/iPod Control ###
+
+# UP
+ir(1,1,32,0xCE41B)
+
+# VOL UP
+ir(1,1,32,0xC41BE)
+
+# DOWN
+ir(1,1,32,0xC14EB)
+
+# PREVIOUS
+ir(1,1,32,0xCC43B)
+
+# PLAY/PAUSE
+ir(1,1,32,0xC847B)
+
+# NEXT
+ir(1,1,32,0xC44BB)
+
+# MENU 
+ir(1,1,32,0xC24DB)
+
+# VOL DOWN
+ir(1,1,32,0xCC13E)
+
+# OK   
+ir(1,1,32,0xC946B)
