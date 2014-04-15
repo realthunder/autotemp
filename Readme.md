@@ -1,9 +1,34 @@
 # Overview
+
 This project is aimed to create an wireless networked automatic room temperature control system. The basic idea is to find some arduino like board with temperature and humidity sensor to sense room envrionment, and use IR remote control or other radio control board to control existing home appliance, such as electric fan, aircon. Multiple such devices can be linked either using wifi, which requires additional hardware, or use other wireless protocol, such as [Wixels](http://www.pololu.com/category/91/wireless) (this one is really promising, since it bundles with a microcontroller, so we don't need a separate arduino board)
 
 # Change Log
 
-## 2014.05.04
+## 2014.04.15
+
+Added motor control function to shell.
+```bash
+# Motor control.
+mt(<speed>,<on_time>,<off_time>)
+# If no argument is specified, the motor is turned off.
+# <Speed> ranges from 0~255. My PC USB can only seems to drive a baby safe fan to 100 max. 
+#   The USB port easily gets stucked once beyond that value.
+# <on_time> specifies the on period in seconds. If omitted, the motor is always on. 
+# <off_time> specifies the off period in seconds. If omitted, the motor is off by half the 
+#   <on_time> if given. The intension is to simulate natrual wind when drive a fan.
+```
+
+Added 5104 IR code sending capability. 
+```bash
+# Send 5104 IR code
+ir(1,-2,<user_code>, <code>).
+# For details of 5104 IR code, please check the document in doc directory. The reason for 
+#   explicitly adding this code send instead of rely on raw code is because I got an bursted
+#   remote controller using this code. So I have to dig into datasheet in order to recreate
+#   the code sending.
+```
+
+## 2014.04.05
 
 Added [Bitlash](http://bitlash.net) for simple shell. Added the following user functions,
 ```bash
