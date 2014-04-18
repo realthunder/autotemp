@@ -4,7 +4,7 @@
 #include <Wire.h>
 #include <bitlash.h>
 
-#define DELAY_START 10000
+// #define DELAY_START 10000
 
 // #define ENABLE_SERVO
 
@@ -96,12 +96,14 @@ void setup() {
 }
 
 void loop() {
+#ifdef DELAY_START
     static int init;
-    if(DELAY_START && !init) {
+    if(!init) {
         delay(DELAY_START);
         Serial.println("start");
         init = 1;
     }
+#endif
     buttonState = digitalRead(BUTTON_PIN);
     loopShell();
     loopServo();
