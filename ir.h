@@ -227,7 +227,7 @@ numvar irCmdSetRaw(unsigned n) {
         speol();
         return -1;
     }
-    for(i=1;i<n;++i) 
+    for(i=2;i<=n;++i) 
         rawBuf[codeLen++] = getarg(i);
     rawInit = 0;
     return 0;
