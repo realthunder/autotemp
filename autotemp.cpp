@@ -5,8 +5,12 @@
 #include <bitlash.h>
 
 #define DELAY_START 10000
+
 // #define ENABLE_SERVO
-#define ENABLE_MOTOR
+
+//WARNING motor prefers high frequency pwm but conflict with irsend pin 5
+// #define ENABLE_MOTOR 
+
 #define ENABLE_IIC
 #define ENABLE_IR
 #define ENABLE_SHELL
@@ -54,6 +58,12 @@ int lastButtonState;
 #endif
 
 #ifdef ENABLE_SHELL
+
+numvar promptCmd() {
+    sp(">\r\n");
+    return 0;
+}
+
 void setupShell() {
     initBitlash(38400);
 #ifdef ENABLE_IIC
@@ -65,6 +75,7 @@ void setupShell() {
 #ifdef ENABLE_MOTOR
     addBitlashFunction("mt",(bitlash_function) mtCmd);
 #endif
+    addBitlashFunction("prompt",(bitlash_function) promptCmd);
 }
 
 void loopShell() {
