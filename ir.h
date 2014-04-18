@@ -9,8 +9,6 @@ IRsend irsend;
 decode_results results;
 
 void setupIR() {
-    irsend.enableIROut(38);
-    irrecv.enableIRIn();
     pinMode(STATUS_PIN, OUTPUT);
 }
 
@@ -86,6 +84,7 @@ void irDecode(decode_results *results,int width) {
 int irSend(int repeat) {
     int i;
     int ret = -1;
+    irsend.enableIROut(38);
     if(codeType == UNKNOWN /* i.e. raw */) {
         sp("Sent RAW");
         // Assume 38 KHz
