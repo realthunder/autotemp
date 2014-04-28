@@ -1,76 +1,80 @@
+#ifndef ENABLE_SHELL
 int thMonitorInterval=1000;
-byte temperature;
-byte humidity;
-byte thIndex;
+#else
+int thMonitorInterval=0;
+#endif
+int temperature;
+int humidity;
+int thReady=1;
 
 void setupIIC() {
     Wire.begin();
 }
 
+int thUpdate(int timeout) {
+    char data[4];
+    int i;
+    INIT_TIMEOUT;
+    if(thReady) {
+        Wire.beginTransmission(0x27);
+        Wire.endTransmission();
+        thReady = 0;
+    }
+    while(1) {
+        Wire.requestFrom(0x27, 4);
+        for(i=0;i<4&&Wire.available();++i)
+            data[i] = Wire.read();
+        if(i!=4||(data[0]&0xc0)) {
+            if(!timeout) return -1;
+            delay(50);
+            if(IS_TIMEOUT(timeout)) {
+                thReady = 1;
+                return -1;
+            }
+        }else {
+            unsigned status = (data[0]&0xc0)>>6;
+            unsigned hum = (((data[0]&0x3f)<<8)+data[1])*1000/0x3ffe;
+            unsigned temp = ((((data[2]<<8)+data[3])>>2)*1650/0x3ffe)-400;
+            temperature = temp;
+            humidity = hum;
+            thReady = 1;
+            return 0;
+        }
+    }
+}
+
 #ifdef ENABLE_SHELL
-numvar thConfig(void) {
-    thMonitorInterval = getarg(1);
-    return 0;
-}
-numvar thRead(void) {
-    printInteger(thIndex,0,0);
-    sp(" H: ");
-    printInteger(humidity,0,0);
-    sp(" T: ");
-    printInteger(temperature,0,0);
-    speol();
-    return 0;
-}
 numvar thCmd() {
-    if(getarg(0)>0)
+    if(getarg(0))
         thMonitorInterval = getarg(1);
-    else
-        thRead();
+    else if(!thUpdate(1000)) {
+        sp("H: ");
+        printInteger(humidity,0,0);
+        sp(" T: ");
+        printInteger(temperature,0,0);
+        speol();
+    }else
+        sp("Timeout\r\n");
     return 0;
 }
 #endif
 
 void loopIIC() {
-    static int ready=1;
     static unsigned timer;
-    char data[4];
     unsigned t;
     if(!thMonitorInterval) return;
 
     t = millis();
-    if(ready) {
+    if(thReady) {
         if(t<timer || (t-timer)>(thMonitorInterval<<10)) //cheap detection of wrap around
             return;
-
         timer += thMonitorInterval;
         if(timer < t) timer = t;
-        
-        Wire.beginTransmission(0x27);
-        Wire.endTransmission();
-        ready = 0;
-    }else{
-        int i;
-        Wire.requestFrom(0x27, 4);
-        for(i=0;i<4&&Wire.available();++i)
-            data[i] = Wire.read();
-        if(i!=4||(data[0]&0xc0)) {
-#ifndef ENABLE_SHELL
-            Serial.print("not ready: ");
-            Serial.print(i);
-            Serial.print(", 0x");
-            Serial.println((data[0]<<24)|(data[1]<<16)|(data[2]<<8)|data[3],HEX);
-#endif
-        }else {
-            unsigned status = (data[0]&0xc0)>>6;
-            unsigned hum = (((data[0]&0x3f)<<8)+data[1])*100/0x3ffe;
-            unsigned temp = ((((data[2]<<8)+data[3])>>2)*165/0x3ffe)-40;
-            ++thIndex;
-            temperature = temp;
-            humidity = hum;
-#ifndef ENABLE_SHELL
-            thRead();
-#endif
-            ready = 1;
-        }
+    }
+    if(!thUpdate(0)) {
+        Serial.print("H: ");
+        Serial.print(humidity);
+        Serial.print(" T:");
+        Serial.println(temperature);
     }
 }

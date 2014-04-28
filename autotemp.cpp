@@ -4,6 +4,21 @@
 #include <Wire.h>
 #include <bitlash.h>
 
+#define INIT_TIMEOUT unsigned long _t_start = millis(), _t_tick;
+
+// cheap timeout detection, when wrap around, the actual timeout may double
+#define IS_TIMEOUT(_timeout) \
+    (_t_tick=millis(),\
+     _t_tick>=_t_start&&(_t_tick-_t_start)>=_timeout || \
+        _t_tick<_t_start&&_t_tick>=_timeout)
+
+// accurate timeout detection
+#define IS_TIMEOUT2(_timeout) \
+    (_t_tick=millis(),\
+     _t_tick>=_t_start&&(_t_tick-_t_start)>=_timeout || \
+        _t_tick<_t_start&&((0xffffffff-_t_start)+_t_tick)>=_timeout)
+
+
 // #define DELAY_START 10000
 
 // #define ENABLE_SERVO

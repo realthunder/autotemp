@@ -187,11 +187,13 @@ void loopIR() {
 
 // ir(0, <column width>, <wait period in ms>)
 numvar irCmdRecv(unsigned n) {
-    unsigned i;
     int width = n>1?getarg(2):16;
-    unsigned t = millis()+(n>2?getarg(3)*1000:5000);
+    unsigned long timeout = (n>2?getarg(3)*1000:5000);
+    if(timeout>30000) timeout=30000;
+    INIT_TIMEOUT;
+
     irrecv.enableIRIn();
-    for(i=0;i<IR_DELAY;++i) {
+    while(1) {
         delay(100);
         if(irrecv.decode(&results)) {
             digitalWrite(STATUS_PIN, HIGH);
@@ -199,7 +201,7 @@ numvar irCmdRecv(unsigned n) {
             digitalWrite(STATUS_PIN, LOW);
             break;
         }
-        if(t<=millis()) {
+        if(IS_TIMEOUT(timeout)) {
             sp("Timeout\r\n");
             return -1;
         }

@@ -4,6 +4,11 @@ This project is aimed to create an wireless networked automatic room temperature
 
 # Change Log
 
+## 2014.04.28
+
+Increased temperature and humidity reading accuracy
+Implemented aircon control script based on temperature/humidity monitoring.
+
 ## 2014.04.15
 
 Added motor control function to shell.

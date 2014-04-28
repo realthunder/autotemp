@@ -12,6 +12,10 @@ tty_lock() {
   flock 100
 }
 
+tty_unlock() {
+  flock -u 100
+}
+
 tty_read()  {
 
   # If we need to read the tty output after sending
