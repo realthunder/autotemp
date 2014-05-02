@@ -31,7 +31,7 @@ test "$date" && ln -fs $log $dir/current.log
 pid=$dir/`basename $TTYDEV`-monitor.pid
 test -f $pid && \
   ps|grep `cat $pid`|grep -q `basename $0` && \
-  kill -SIGINT `cat $pid`
+  kill -SIGTERM `cat $pid`
 rm -f $pid
   
 [ "$hook" = "stop" ] && exit
