@@ -29,7 +29,7 @@
 #define ENABLE_IIC
 #define ENABLE_IR
 #define ENABLE_SHELL
-#define TRACE_IRSEND
+#define ENABLE_SERVO
 
 #define noop do{}while(0)
 
@@ -89,6 +89,9 @@ void setupShell() {
 #endif
 #ifdef ENABLE_MOTOR
     addBitlashFunction("mt",(bitlash_function) mtCmd);
+#endif
+#ifdef ENABLE_SERVO
+    addBitlashFunction("sv",(bitlash_function) svCmd);
 #endif
     addBitlashFunction("prompt",(bitlash_function) promptCmd);
 }
