@@ -81,7 +81,7 @@ void irDecode(decode_results *results,int width) {
     codeValue = results->value;
 }
 
-int irSend(int repeat) {
+int irSend(int repeat, bool trace_raw=false) {
     int i;
     int ret = -1;
     irsend.enableIROut(38);
@@ -99,14 +99,14 @@ int irSend(int repeat) {
             }
             rawInit=1;
         }
-#ifdef TRACE_IRSEND
-        for(i=0;i<codeLen;++i) {
-            if((i&15)== 0)
-                speol();
-            printInteger(rawBuf[i],0,0);
-            sp(",");
+        if(trace_raw) {
+            for(i=0;i<codeLen;++i) {
+                if((i&15)== 0)
+                    speol();
+                printInteger(rawBuf[i],0,0);
+                sp(",");
+            }
         }
-#endif
         irsend.sendRaw(rawBuf, codeLen, 38);
     }else if (codeType == NEC) {
         if (repeat) {
@@ -210,14 +210,14 @@ numvar irCmdRecv(unsigned n) {
 }
 
 // ir(1,[type],<len>,<value>)
-numvar irCmdSend(unsigned n) {
+numvar irCmdSend(unsigned n, bool trace_raw) {
     unsigned i;
     codeType = getarg(2);
     if(codeType != UNKNOWN) {
         codeLen = getarg(3);
         codeValue = getarg(4);
     }
-    irSend(0);
+    irSend(0,trace_raw);
 }
 
 // ir(2,[values...])  reset codeLen=0
@@ -245,7 +245,9 @@ numvar irCmd() {
     case 0:
         return irCmdRecv(n);
     case 1:
-        return irCmdSend(n);
+        return irCmdSend(n,false);
+    case 4: 
+        return irCmdSend(n,true);
     case 2:
         codeLen=0;
         //fall through
