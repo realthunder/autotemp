@@ -16,7 +16,7 @@ shift
 tty_lock
 
 # find the last log file
-for f in $dir/*.*.log; do
+for f in `find $dir -name "*.*.log"`; do
   d=${f%.*.log}
   d=`basename $d`
   if [ "$date" \< "$d" ]; then
