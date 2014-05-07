@@ -15,11 +15,11 @@ to=0.05; //screw tolerance
 servoSize = [23,12,16];
 servoLength = 33;
 servoSpace = 2;
-servoScrewL = 5;
+servoScrewL = 3;
 servoScrewD = 1;
 
-motorWireD = 4;
-motorWireZ = 6;
+motorWireD = 3.5;
+motorWireZ = 4;
 
 $fs=0.05;
 
@@ -53,8 +53,7 @@ difference() {
                 cylinder(r=servoScrewD/2,h=servoScrewL+0.05);
         }
     }
-    translate([-R,0,motorWireZ+servoSpace]) rotate([0,90,0]) cylinder(r=motorWireD/2,h=10,center=true);
-    translate([-R,0,(motorWireZ+servoSpace)/2]) cube([10,motorWireD,motorWireZ+servoSpace+0.1],center=true);
+    translate([-R,0,servoSize.z+servoSpace-motorWireZ-motorWireD/2]) rotate([0,90,0]) cylinder(r=motorWireD/2,h=10,center=true);
 }
 
 
