@@ -17,12 +17,12 @@ tty_unlock() {
 tty_read()  {
   (
     exec < $TTYDEV
-    stty igncr
+    stty -echo igncr
     
     read line
     while read line; do
-    [ "$line" = ">" ] && break
-    echo $line
+      [ "$line" = ">" ] && break
+      echo $line
     done
   )
 }
@@ -33,7 +33,7 @@ tty_send() {
 
 tty_run() {
   tty_read &
-  sleep 0.5 &> /dev/null || sleep 1
+  sleep 0.05 &> /dev/null || sleep 1
   tty_send "$@"
   wait
 }
