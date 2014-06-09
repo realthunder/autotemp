@@ -5,15 +5,15 @@ hook() {
   local t_max=$3 t_min=$4 h_max=$5 h_min=$6 
   case "$t_max" in
   cool)
-    t_max=274
+    t_max=272
     h_max=650
     t_min=265
-    h_min=550
+    h_min=530
     ;;
   *)
-    test "$t_max" || t_max=276
-    test "$h_max" || h_max=680
-    test "$t_min" || t_min=267 
+    test "$t_max" || t_max=275
+    test "$h_max" || h_max=660
+    test "$t_min" || t_min=266 
     test "$h_min" || h_min=550
     ;;
   esac
@@ -30,12 +30,12 @@ hook() {
   [ $HOOK_TICK -lt 10 ] && return
   
   if [ "$HOOK_STATE" = "$s_max" ]; then
-    [ $t -gt $t_max ] || [ $h -gt $h_max ] && \
+    [ $t -gt $t_max ] || { [ $t -gt $t_min ] && [ $h -gt $h_max ]; } && \
       $action_min && HOOK_STATE="$s_min" && HOOK_TICK=0
   elif [ "$HOOK_STATE" != "$s_min" ]; then
       $action_max && HOOK_STATE="$s_max"
   else
-    [ $t -lt $t_min ] || [ $h -lt $h_min ]  && \
+     [ $t -lt $t_min ] || { [ $t -lt $t_max ] && [ $h -lt $h_min ]; } && \
       $action_max && HOOK_STATE="$s_max" && HOOK_TICK=0
   fi
 }
