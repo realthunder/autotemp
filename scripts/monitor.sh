@@ -42,7 +42,7 @@ tty_unlock
 if test "$hook"; then
   . $hook
   trap 'exit' INT TERM
-  trap 'hook stop 0 "$@"; echo "exit">>$log' EXIT
+  trap 'tty_unlock; hook stop 0 "$@"; echo "exit">>$log' EXIT
 fi
 
 while true; do
