@@ -28,22 +28,35 @@ for f in `find $dir -name "*.*.log"`; do
 done
 test "$date" && ln -fs $log $dir/current.log
 
+tty_unlock
+
+tty_lock2
+
 pid=$dir/`basename $TTYDEV`-monitor.pid
-test -f $pid && \
-  ps|grep `cat $pid`|grep -q `basename $0` && \
-  kill -SIGTERM `cat $pid`
+sig=
+echo killing monitor...
+while test -f $pid && \
+        ps|grep `cat $pid`|grep -q `basename $0`
+do
+    kill $sig `cat $pid`
+    sig="-SIGTERM"
+    sleep 2
+done
 rm -f $pid
+echo killed
   
 [ "$hook" = "stop" ] && exit
 echo $$ > $pid
 
-tty_unlock
-
 if test "$hook"; then
   . $hook
   trap 'exit' INT TERM
-  trap 'tty_unlock; hook stop 0 "$@"; echo "exit">>$log' EXIT
+  trap 'tty_unlock; hook stop 0 "$@"; echo "exit"; echo "exit">>$log' EXIT
 fi
+
+tty_unlock2
+
+echo starting...
 
 while true; do
   
