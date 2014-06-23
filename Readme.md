@@ -108,6 +108,8 @@ cd <path-to-arduino>
 patch -p1 < <path-to-patch>
 ```
 
+You also need a set of arduino makefiles from [here](https://github.com/realthunder/Arduino-Makefile). Clone it to the same directory where you put the autotemp project.
+
 To compile and upload,
 ```
 make board=pro2 upload
