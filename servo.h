@@ -1,20 +1,23 @@
+#include <Servo.h>
 int servo_pos;
 int servo_step;
 Servo myservo;   
+
+INIT_TIMEOUT;
 
 void setupServo() {
 }
 
 void loopServo() {
-  if(!servo_step) return;
+  if(!servo_step || !IS_TIMEOUT2(servo_step)) return;
   if(servo_pos > 0) {
       myservo.write(servo_pos);
       if(++servo_pos == 180) servo_pos = -180;
   }else{
       myservo.write(-servo_pos);
-      ++servo_pos == 0;
+      ++servo_pos;
   }
-  delay(servo_step);
+  RESET_TIMEOUT;
 }
 
 numvar svCmd() {
@@ -28,6 +31,7 @@ numvar svCmd() {
     case 1:
         myservo.attach(SERVO_PIN);
         servo_step = n<2?15:getarg(2);
+        RESET_TIMEOUT;
         break;
     case 2:
         servo_pos = n<2?90:getarg(2);

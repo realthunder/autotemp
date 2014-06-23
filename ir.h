@@ -1,3 +1,4 @@
+#include <IRremote.h>
 #define CODE_5104(u,s) ((3<<10)|(u<<7)|s)
 #define T_5104 1688 /* T=1.6879ms */
 #define T2_5104 (T_5104/4)
@@ -37,7 +38,6 @@ int codeLen;
 // Most of this code is just logging
 void irDecode(decode_results *results,int width) {
     int type = results->decode_type;
-    int count = results->rawlen;
     int len;
     if (type == UNKNOWN) {
         unsigned int *buf = rawBuf;
@@ -211,13 +211,13 @@ numvar irCmdRecv(unsigned n) {
 
 // ir(1,[type],<len>,<value>)
 numvar irCmdSend(unsigned n, bool trace_raw) {
-    unsigned i;
     codeType = getarg(2);
     if(codeType != UNKNOWN) {
         codeLen = getarg(3);
         codeValue = getarg(4);
     }
     irSend(0,trace_raw);
+    return 0;
 }
 
 // ir(2,[values...])  reset codeLen=0

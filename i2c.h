@@ -1,7 +1,8 @@
+#include <Wire.h>
 #ifndef ENABLE_SHELL
-int thMonitorInterval=1000;
+unsigned thMonitorInterval=1000;
 #else
-int thMonitorInterval=0;
+unsigned thMonitorInterval=0;
 #endif
 int temperature;
 int humidity;
@@ -11,7 +12,7 @@ void setupIIC() {
     Wire.begin();
 }
 
-int thUpdate(int timeout) {
+int thUpdate(unsigned timeout) {
     char data[4];
     int i;
     INIT_TIMEOUT;
@@ -32,7 +33,6 @@ int thUpdate(int timeout) {
                 return -1;
             }
         }else {
-            unsigned status = (data[0]&0xc0)>>6;
             unsigned hum = (((data[0]&0x3f)<<8)+data[1])*1000/0x3ffe;
             unsigned temp = ((((data[2]<<8)+data[3])>>2)*1650/0x3ffe)-400;
             temperature = temp;
@@ -60,8 +60,8 @@ numvar thCmd() {
 #endif
 
 void loopIIC() {
-    static unsigned timer;
-    unsigned t;
+    static unsigned long timer;
+    unsigned long t;
     if(!thMonitorInterval) return;
 
     t = millis();

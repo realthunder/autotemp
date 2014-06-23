@@ -1,0 +1,40 @@
+--- a/hardware/arduino/cores/arduino/wiring.c	2014-06-23 23:49:56.005836000 +0800
++++ b/hardware/arduino/cores/arduino/wiring.c	2014-06-22 13:45:01.692670200 +0800
+@@ -26,7 +26,24 @@
+ 
+ // the prescaler is set so that timer0 ticks every 64 clock cycles, and the
+ // the overflow handler is called every 256 ticks.
+-#define MICROSECONDS_PER_TIMER0_OVERFLOW (clockCyclesToMicroseconds(64 * 256))
++#ifndef ARDUINO_TIMER_SCALE
++#   define ARDUINO_TIMER_SCALE 3
++#endif
++#if ARDUINO_TIMER_SCALE==1
++#   define PRESCALE 1
++#elif ARDUINO_TIMER_SCALE==2
++#   define PRESCALE 8
++#elif ARDUINO_TIMER_SCALE==3
++#   define PRESCALE 64
++#elif ARDUINO_TIMER_SCALE==4
++#   define PRESCALE 256
++#elif ARDUINO_TIMER_SCALE==5
++#   define PRESCALE 1024
++#else
++#   error invalid timer scale
++#endif
++
++#define MICROSECONDS_PER_TIMER0_OVERFLOW (clockCyclesToMicroseconds(PRESCALE * 256))
+ 
+ // the whole number of milliseconds per timer0 overflow
+ #define MILLIS_INC (MICROSECONDS_PER_TIMER0_OVERFLOW / 1000)
+@@ -210,8 +227,9 @@
+ 	sbi(TCCR0, CS00);
+ #elif defined(TCCR0B) && defined(CS01) && defined(CS00)
+ 	// this combination is for the standard 168/328/1280/2560
+-	sbi(TCCR0B, CS01);
+-	sbi(TCCR0B, CS00);
++	// sbi(TCCR0B, CS01);
++	// sbi(TCCR0B, CS00);
++    _SFR_BYTE(TCCR0B) |= ARDUINO_TIMER_SCALE;
+ #elif defined(TCCR0A) && defined(CS01) && defined(CS00)
+ 	// this combination is for the __AVR_ATmega645__ series
+ 	sbi(TCCR0A, CS01);

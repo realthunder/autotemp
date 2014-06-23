@@ -1,6 +1,8 @@
 void setupMotor() {
     pinMode(MOTOR_PIN,OUTPUT);
+#ifndef BOARD_PRO2
     analogWriteFrequency(MOTOR_PIN,187500);
+#endif
 }
 
 #ifndef ENABLE_MOTOR_VARIABLE
@@ -48,6 +50,7 @@ numvar mtCmd() {
         }
     }
     analogWrite(MOTOR_PIN,motor_speed);
+    return 0;
 }
 #   endif //ENABLE_SHELL
 #else //ENABLE_MOTOR_VARIABLE
