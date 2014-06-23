@@ -4,6 +4,25 @@ This project is aimed to create an wireless networked automatic room temperature
 
 # Change Log
 
+## 2014.06.24
+
+Added support for pro mini 328. 
+Added patch to arduino core to support changing of PWM frequency without affecting millis()
+
+## 2014.05.02
+
+Added servo control function to shell.
+```bash
+# Servo control
+
+# Swing the servo.
+sv(1,<delay>) 
+# The second argument controls the delay in milliseconds for each degree.Delay defaults to 15
+
+# Position the servo
+sv(2,<degree>)
+```
+
 ## 2014.04.28
 
 Increased temperature and humidity reading accuracy
@@ -76,5 +95,21 @@ Initial prototype is built using [teensy3](http://www.pjrc.com/teensy/index.html
 
 To compile the project, we'll need the follow the teensy website [instruction](http://www.pjrc.com/teensy/first_use.html) to install the teensyduino. I'm a heavy vim user, so I also borrowed makefile from [here](http://forum.pjrc.com/threads/23605-Teensy-mk-port-of-Arduino-mk-Makefile). I slightly modified the makefile to make it work with ``cygwin``, and is available [here](https://gist.github.com/realthunder/9374708). You need to modify it to set ``ARDUINO_DIR`` to your arduino installation direction. You probably need to install the arduino in a none spaced directory to make cygwin happy.
 
-You will need [bitlash](http://bitlash.net) to compile the project. You can either obtain the official release, or from my fork [here](https://github.com/realthunder/bitlash). Although they are the same at the moment, I may need to personalize it in the future.
+You will need [bitlash](http://bitlash.net) to compile the project. You need a patched version from [here](https://github.com/realthunder/bitlash).
+
+To compile and upload, simply use the following command
+```
+make upload
+```
+
+To compile the project for [pro mini 328](https://www.sparkfun.com/products/11113), you'll need a patch in the patch directory to add support of changing arduino pwm frequency without affecting millis() function. The patch is against arduino 1.0.5. To apply the patch
+```
+cd <path-to-arduino>
+patch -p1 < <path-to-patch>
+```
+
+To compile and upload,
+```
+make board=pro2 upload
+```
 
