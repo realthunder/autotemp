@@ -11,6 +11,9 @@ decode_results results;
 
 void setupIR() {
     pinMode(STATUS_PIN, OUTPUT);
+#ifndef ENABLE_SHELL
+    irrecv.enableIRIn();
+#endif
 }
 
 void send5104(unsigned user,unsigned code /* 1~8 for K1~K8 */) {
@@ -34,6 +37,7 @@ int codeType=-1;
 unsigned long codeValue;
 int codeLen;
 
+#ifdef ENABLE_SHELL
 // Stores the code for later playback
 // Most of this code is just logging
 void irDecode(decode_results *results,int width) {
@@ -162,29 +166,6 @@ int irSend(int repeat, bool trace_raw=false) {
     return ret;
 }
 
-void loopIR() {
-#ifndef ENABLE_SHELL
-    // If button pressed, send the code.
-    if (lastButtonState == LOW && buttonState == HIGH) {
-        Serial.println("Released");
-        irrecv.enableIRIn(); // Re-enable receiver
-    }
-
-    if (!buttonState) {
-        Serial.println("Pressed, sending");
-        digitalWrite(STATUS_PIN, HIGH);
-        irSend(lastButtonState == buttonState);
-        digitalWrite(STATUS_PIN, LOW);
-        delay(50); // Wait a bit between retransmissions
-    } 
-    else if (irrecv.decode(&results)) {
-        digitalWrite(STATUS_PIN, HIGH);
-        irrecv.resume(); // resume receiver
-        digitalWrite(STATUS_PIN, LOW);
-    }
-#endif
-}
-
 // ir(0, <column width>, <wait period in ms>)
 numvar irCmdRecv(unsigned n) {
     int width = n>1?getarg(2):16;
@@ -256,5 +237,76 @@ numvar irCmd() {
     default:
         return -1;
     }
+}
+
+#endif
+
+void loopIR() {
+#ifndef ENABLE_SHELL
+    INIT_TIMEOUT;
+
+    static unsigned long timeout = 0;
+    static byte last_mt = 0x30, current_mt;
+    static byte last_sv = 48;
+
+    // toggle button to manually turn on/off fan
+    if(buttonState != lastButtonState) {
+        unsigned v;
+        if(current_mt == 0) {
+            v = last_sv;
+            current_mt = last_mt;
+            if(timeout) RESET_TIMEOUT;
+        }else {
+            v = 0;
+            current_mt = 0;
+        }
+        mt(1,current_mt,0,0);
+        sv(2,1,v);
+    }
+
+    if(current_mt && timeout && IS_TIMEOUT(timeout)) {
+        current_mt = 0;
+        mt(1,0,0,0);
+        sv(2,1,0);
+    }
+
+    if (irrecv.decode(&results)) {
+        digitalWrite(STATUS_PIN, HIGH);
+        Serial.print("ir ");
+        Serial.print(results.decode_type);
+        Serial.print(", ");
+        Serial.println(results.value,HEX);
+        if(results.decode_type == RC5) {
+            unsigned cmd = (results.value>>8) & 0xf;
+            results.value &= 0xff;
+            switch(cmd) {
+            case 0: { //change motor speed and servo swing speed
+                unsigned v = results.value&0xf0;
+                if(v == 0xf0) v = 0xff;
+                if(!current_mt && v && timeout)
+                    RESET_TIMEOUT;
+                current_mt = v;
+                if(v) last_mt = v;
+                mt(1,v,0,0);
+
+                v = (results.value&0xf)<<4;
+                if(v) last_sv = v;
+                sv(2,1,v);
+                break;
+            } case 1: { //change servo swing range
+                sv(2,3,results.value);
+                break;
+            } case 2: { //change timeout in minutes
+                timeout = results.value*60000;
+                if(current_mt) RESET_TIMEOUT;
+                break;
+            } default:
+                break;
+            }
+        }
+        irrecv.resume(); // resume receiver
+        digitalWrite(STATUS_PIN, LOW);
+    }
+#endif
 }
 

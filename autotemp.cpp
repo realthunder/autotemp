@@ -27,7 +27,7 @@
 
 // #define ENABLE_IIC
 #define ENABLE_IR
-#define ENABLE_SHELL
+// #define ENABLE_SHELL
 #define ENABLE_SERVO
 
 #ifdef ENABLE_SHELL
@@ -118,6 +118,7 @@ void loopShell() {
 
 void setup() {
     pinMode(BUTTON_PIN,INPUT_PULLUP);
+    lastButtonState = buttonState = digitalRead(BUTTON_PIN);
     setupShell();
     setupIR();
     setupServo();

@@ -4,6 +4,12 @@ This project is aimed to create an wireless networked automatic room temperature
 
 # Change Log
 
+## 2014.06.26
+
+Added IR remote control of servo and motor without bitlash
+Added toggle button function for manual controlling a fan
+Added servo swing range function sv(3,<degree>)
+
 ## 2014.06.24
 
 Added support for pro mini 328. 

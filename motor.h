@@ -33,24 +33,28 @@ void loopMotor() {
     analogWrite(MOTOR_PIN,speed);
 }
 
-#   ifdef ENABLE_SHELL
-numvar mtCmd() {
-    int n = getarg(0);
+int mt(unsigned n, unsigned arg1, unsigned arg2, unsigned arg3)
+{
     motor_t = millis();
     motor_speed = 0;
     if(n==0)
         motor_off_t = 0;
     else {
-        motor_speed = getarg(1);
+        motor_speed = arg1;
         if(n<2)
             motor_off_t = 0;
         else {
-            motor_on_t = getarg(2)*1000;
-            motor_off_t = n>2?(getarg(3)*1000):(motor_on_t/2);
+            motor_on_t = arg2*1000;
+            motor_off_t = n>2?(arg3*1000):(motor_on_t/2);
         }
     }
     analogWrite(MOTOR_PIN,motor_speed);
     return 0;
+}
+
+#   ifdef ENABLE_SHELL
+numvar mtCmd() {
+    return mt(getarg(0),getarg(1),getarg(2),getarg(3));
 }
 #   endif //ENABLE_SHELL
 #else //ENABLE_MOTOR_VARIABLE
