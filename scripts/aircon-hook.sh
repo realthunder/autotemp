@@ -15,10 +15,17 @@ hook() {
   local action_min="./tty-irsend.sh ircode/aircon/${a_min}"
   local action_max="./tty-irsend.sh ircode/aircon/${a_max}"
   local s_max="$t_max-$h_max" s_min="$t_min-$h_min"
-  if [ "$h" = stop ]; then
+  [ "$h" = exit ] && return
+  case "$h" in
+  stop)
     $action_max
     return
-  fi
+    ;;
+  kill)
+    ./tty-irsend.sh ircode/aircon/off
+    return
+    ;;
+  esac 
   
   HOOK_TICK=$((HOOK_TICK+1))
   # make sure we don't change state too often

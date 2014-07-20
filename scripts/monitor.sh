@@ -32,6 +32,8 @@ tty_unlock
 
 tty_lock2
 
+[ "$hook" = "kill" ] && tty_lock3
+
 pid=$dir/`basename $TTYDEV`-monitor.pid
 sig=
 echo killing monitor...
@@ -45,13 +47,13 @@ done
 rm -f $pid
 echo killed
   
-[ "$hook" = "stop" ] && exit
+[ "$hook" = "stop" ] || [ "$hook" = "kill" ] && exit
 echo $$ > $pid
 
 if test "$hook"; then
   . $hook
   trap 'exit' INT TERM
-  trap 'tty_unlock; hook stop 0 "$@"; echo "exit"; echo "exit">>$log' EXIT
+  trap 'tty_unlock; a=kill; tty_trylock3 && a=stop; hook $a "$@"; echo "exit"; echo "exit">>$log' EXIT
 fi
 
 tty_unlock2

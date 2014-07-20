@@ -18,7 +18,9 @@ irsend() {
 
 irsend $1
 ret=$?
-echo $ans
+
+echo $0 $@
+[ $ret != 0 ] && echo $ans
 
 log=/tmp/thlog/current.log
 if test -f $log; then
